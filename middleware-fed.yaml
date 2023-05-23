@@ -1,0 +1,9 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: stripprefix
+  namespace: cattle-neuvector-system
+spec:
+  replacePathRegex:
+    regex: /fedmanaged:443\/*(.*)
+    replacement: /$1

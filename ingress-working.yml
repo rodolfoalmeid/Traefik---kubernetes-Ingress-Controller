@@ -1,0 +1,29 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+  name: neuvector-ingress
+  namespace: cattle-neuvector-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`ralmeidat.do.support.rancher.space`)  
+    kind: Rule
+    services:
+      - name: neuvector-service-webui
+        passHostHeader: true
+        port: 8443
+        scheme: https
+  - match: Host(`ralmeidat.do.support.rancher.space`) && PathPrefix(`/fedmanaged`)
+    kind: Rule
+    services:
+      - name: neuvector-svc-controller-fed-managed
+        passHostHeader: true
+        port: 10443
+        scheme: https
+    middlewares:
+      - name: stripprefix
+  tls:
+    secretName: tls-secret
